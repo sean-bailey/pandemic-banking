@@ -145,18 +145,13 @@ def handler(event, context):
     total_labels = getlabels(bucket_name,file_name)
     image_process_value=processImageInfo(total_labels,threshold_value,proximity_threshold)
     bodydata=None
-    if image_process_value == 0:
-        bodydata= json.dumps({
-                'returndata' : "NONE",
-                'successcode':str(image_process_value)
-            })
-
-    else:
+    presigned_url_link = s3.generate_presigned_url('get_object',
+                                         Params={'Bucket':bucket_name,
+                                                 'Key': file_name},
+                                         ExpiresIn=3600)
+    if not image_process_value == 0:
         message_array = messagegeneratorfunction(image_process_value)
-        presigned_url_link = s3.generate_presigned_url('get_object',
-                                             Params={'Bucket':bucket_name,
-                                                     'Key': file_name},
-                                             ExpiresIn=3600),
+
 
         response = sns.publish(
         TopicArn=SNS_ARN,
@@ -164,10 +159,11 @@ def handler(event, context):
         Subject = message_array[0]
         )
 
-        bodydata= json.dumps({
-                'returndata' : presigned_url_link,
-                'successcode':str(image_process_value)
-            })
+
+    bodydata= json.dumps({
+            'returndata' : presigned_url_link,
+            'successcode':str(image_process_value)
+        })
     finalresponse={}
     finalresponse["headers"]={
     'Content-Type': 'application/json',

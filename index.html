@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<style type="text/css" media="screen">
+.myButton {
+  -moz-box-shadow: 0px 0px 0px 2px #9fb4f2;
+  -webkit-box-shadow: 0px 0px 0px 2px #9fb4f2;
+  box-shadow: 0px 0px 0px 2px #9fb4f2;
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7892c2), color-stop(1, #476e9e));
+  background:-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+  background:-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+  background:-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+  background:-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+  background:linear-gradient(to bottom, #7892c2 5%, #476e9e 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#7892c2', endColorstr='#476e9e',GradientType=0);
+  background-color:#7892c2;
+  -moz-border-radius:42px;
+  -webkit-border-radius:42px;
+  border-radius:42px;
+  border:7px solid #4e6096;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:26px;
+  padding:32px 76px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #283966;
+}
+.myButton:hover {
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #476e9e), color-stop(1, #7892c2));
+  background:-moz-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+  background:-webkit-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+  background:-o-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+  background:-ms-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+  background:linear-gradient(to bottom, #476e9e 5%, #7892c2 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#476e9e', endColorstr='#7892c2',GradientType=0);
+  background-color:#476e9e;
+}
+.myButton:active {
+  position:relative;
+  top:1px;
+}
+</style>
+<html>
+    <head>
+        <title>Online Image to SVG Converter</title>
+        <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+
+
+        <script>
+
+/*
+Pretty straightforward: Button clicks, calls api, api returns successCode and
+returndata, returndata is url to image, display message based on statusCode
+and display Image to match.
+*/
+
+    const process_url="https://hdb95y7ltk.execute-api.us-east-1.amazonaws.com/pandemic-demo?"
+    const bucketname="pandemic-banking-demo";
+    const threshold="20";
+    const proximityThreshold="0.2";
+    var inspectme="";
+
+
+    function wait(ms){
+       var start = new Date().getTime();
+       var end = start;
+       while(end < start + ms) {
+         end = new Date().getTime();
+      }
+    }
+
+
+    function process_image(){
+      var keyname = "";
+      keyname = Math.floor(Math.random()*22)+1 + ".png";
+      //hardcode all of this for speed...
+      var finalprocessurl = process_url+"fileName="+keyname+"&bucketName="+bucketname+"&threshold="+threshold+"&proximityThreshold="+proximityThreshold;
+      var xhttp2 = new XMLHttpRequest();
+      xhttp2.onreadystatechange = function() {
+                 console.log(this.readyState);
+                 var process_percent=this.readyState*25;
+                 var process_status="Processing... "+process_percent+"% complete...";
+                 document.getElementById('cameraresults').style.display="block";
+                 if (this.readyState == 4 && this.status == 200) {
+                     inspectme = this.responseText;
+                     successcode = JSON.parse(JSON.parse(inspectme)['body'])['successcode'];
+                     var imagelink = JSON.parse(JSON.parse(inspectme)['body'])['returndata'];
+                     console.log(inspectme);
+                     if (successcode == "1"){
+                       document.getElementById('output_image').src = imagelink;
+                       document.getElementById('cameraresults').innerHTML = "</br> <h2>There are too many people detected in this image. </br> Intervention required!</h2>";
+                       //now we want to call the download function...
+                     }
+                     if (successcode == "2"){
+                       document.getElementById('output_image').src = imagelink;
+                       document.getElementById('cameraresults').innerHTML = "</br> <h2>The density of people in this image is too high. </br> Intervention required for social distancing!</h2>";
+                       //do something else
+                     }
+                     if (successcode == "0"){
+                       document.getElementById('output_image').src = imagelink;
+                       document.getElementById('cameraresults').innerHTML = "</br> <h2>No issues detected in this image.</h2>";
+                       //do another thing
+                     }
+                 }
+             };
+       xhttp2.open("GET", finalprocessurl, true);
+       xhttp2.send();
+     }
+
+
+
+
+        </script>
+
+    </head>
+
+    <body>
+
+
+
+
+<b><center>Welcome to the Pandemic Banking Integrated Camera Social Distancing Analysis Assistant.</b>
+</br>
+</br>
+
+
+</br>
+<input type="button" class="myButton" onclick="process_image()" value="Click to Check Random Camera Feed" />
+
+</br>
+</br>
+
+<div id="cameraresults" style="display:none">
+
+</div>
+<img id="output_image" height="400" width="400"/></img>
+</center>
+    </body>
+
+</html>

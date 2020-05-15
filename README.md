@@ -202,7 +202,7 @@ And that's it! With luck, you will then be able to access your S3 static site an
 
 
 
-#Nuts and Bolts: How does it work?
+# Nuts and Bolts: How does it work?
 
 This project demonstrates that you can quickly and easily deploy a population density alert tool with no infrastructure (as everything is serverless) and no model training, with everything working out of the box. However, while the tools exist to perform image Recognition as a service, the ability to determine if the identified people are too close together is not such a common feature.
 

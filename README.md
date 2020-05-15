@@ -27,11 +27,13 @@ Ideally, we would have access to a feed from a camera source, however that would
 
 For the purposes of this demonstration, it all starts with the S3 bucket.
 
-*Deploy an S3 bucket* which you have permissions to upload and download files from. This will be your primary repository for your demonstration images.
+### *Deploy an S3 bucket*
+ which you have permissions to upload and download files from. This will be your primary repository for your demonstration images.
 
-*Now for the SNS Topic*: Create an SNS topic and add the appropriate endpoints of your choosing. I've leveraged e-mail in this case, which will be sufficient.
+### *Now for the SNS Topic*:
+ Create an SNS topic and add the appropriate endpoints of your choosing. I've leveraged e-mail in this case, which will be sufficient.
 
-*Next, the Lambda Role*.
+### *Next, the Lambda Role*.
 
 In your AWS Account, create a lambda role called `pandemic_banking_role`, and keep track of the bucket and the SNS topic ARN from before. Give it the following policy:
 
@@ -147,7 +149,7 @@ lambda deploy
 ```
 and python-lambda will do the rest.
 
-*API Gateway*
+### *API Gateway*
 
 Create a new REST API and name it however you wish. Create a new GET method, and give it authorization to your newly deployed Lambda function. Under `Integration Request`, go to `Mapping Templates` and add a new content type, and type in
 `application/json`
@@ -166,7 +168,7 @@ Click on that, and input the following for the template:
 Save, then go to Actions > Enable CORS. Finally, deploy the API and save the Endpoint.
 
 
-*Static site*
+### *Static site*
 
 Open up `index.html` and modify the following values:
 Change `process_url` to your API endpoint from above, ensuring to end it with a `?`
@@ -175,7 +177,8 @@ Change `bucketname` to match your bucket name
 Save, then upload the file to your bucket.
 
 Change your bucket properties to enable Static Website Hosting, with `index.html` being your site. Go to permissions, and turn Off "block public access".
-###*Warning: by doing so now anyone can get access to the files in your bucket. This is only to duplicate the demonstration here. DO NOT USE THIS IN A PRODUCTION ENVIRONMENT YOU DO NOT WISH TO SHARE WITH THE WORLD.*
+
+### *Warning: by doing so now anyone can get access to the files in your bucket. This is only to duplicate the demonstration here. DO NOT USE THIS IN A PRODUCTION ENVIRONMENT YOU DO NOT WISH TO SHARE WITH THE WORLD.*
 
 Next, plug in the following Bucket Policy, taking heed of the warning above:
 

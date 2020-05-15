@@ -13,7 +13,7 @@ Ideally, we would have access to a feed from a camera source, however that would
 For the purposes of this demonstration, it all starts with the S3 bucket.
 
 ### *Deploy an S3 bucket*
- which you have permissions to upload and download files from. This will be your primary repository for your demonstration images.
+ which you have permissions to upload and download files from. This will be your primary repository for your demonstration images. Upload all of the images in the `./demo-images` directory into your bucket (WITHOUT THE DIRECTORY)
 
 ### *Now for the SNS Topic*:
  Create an SNS topic and add the appropriate endpoints of your choosing. I've leveraged e-mail in this case, which will be sufficient.

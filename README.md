@@ -1,21 +1,6 @@
 # pandemic-banking
 This repo will hold the code and relevant materials for the McKinsey 2020 Hackathon for COVID-19
 
-Endpoint:
-https://hdb95y7ltk.execute-api.us-east-1.amazonaws.com/pandemic-demo
-
-the following JSON can be provided to the REST API Endpoint:
-
-​
-{
-“bucketName”: “pandemic-banking-demo”,
-“fileName”: “20.png”,
-“threshold”: “10",
-“proximityThreshold”: “0.2"
-}
-
-
-You will get one of three successCodes, 0, 1 or 2. 0 means that there are no problems, 1 means that there are too many people detected in the image, 2 means that the concentration of people is too high (too many people not 2m apart) as well as a link to the image.
 
 ## Cloud Based Security Camera Social Distancing Analysis and Alert Tool
 

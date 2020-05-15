@@ -210,7 +210,7 @@ That's where the math section of the Lambda function comes in. To start, it runs
 
 Next, we know that in an optical standpoint, the size an object appears to be is directly proportionate to how far away it is from the viewer (https://en.wikipedia.org/wiki/Perspective_(graphical)#Linear_perspective) and that we wanted to have a simple system that would work with the simple camera systems available commercially, without equipped rangefinders or stereoscopic capabilities. To calculate the distance between two objects, we can leverage the Pythagorean theorem as in a linear grid we can easily calculate X and Y distances.
 
-By combining the two and considering Thale's Theorem, we can give a rough estimate of the distance two objects of identical size are away from each other.
+By combining the two and considering Thale's Theorem (https://en.wikipedia.org/wiki/Intercept_theorem), we can give a rough estimate of the distance two objects of identical size are away from each other.
 
 As an example, if you have an object in the foreground, and an identical object in the background, the background object will appear smaller by the proportion of how farther it is away from the foreground object. You can therefore apply the ratio of the apparent sizes of the objects iteratively and one of the objects apparent heights as a unit of distance to map a rough distance between the two objects.
 

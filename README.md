@@ -1,6 +1,10 @@
 # pandemic-banking
 This repo will hold the code and relevant materials for the McKinsey 2020 Hackathon for COVID-19
 
+# Live demo available here:
+
+http://pandemic-banking-demo.s3-website-us-east-1.amazonaws.com/
+
 
 ## Cloud Based Security Camera Social Distancing Analysis and Alert Tool
 

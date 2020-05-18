@@ -14,6 +14,27 @@ This project uses AWS Rekognition, Lambda, API Gateway, SNS and S3 static hostin
 
 Ideally, we would have access to a feed from a camera source, however that would require direct access to the business security camera feeds in question. This project demonstrates the realities of leveraging off the shelf models and cloud based solutions with existing security camera infrastructure to handle the new world of Social Distancing.
 
+
+# Nuts and Bolts: How does it work?
+
+This project demonstrates that you can quickly and easily deploy a population density alert tool with no infrastructure (as everything is serverless) and no model training, with everything working out of the box. However, while the tools exist to perform image Recognition as a service, the ability to determine if the identified people are too close together is not such a common feature.
+
+That's where the math section of the Lambda function comes in. To start, it runs on two major assumptions: all persons identified are all the same exact height, and that they are average height (~5'4", or ~1.625m). As the CDC recommends a 6ft / 2m distance for social distancing, that average height was definitely "good enough" for further calculations.
+
+Next, we know that in an optical standpoint, the size an object appears to be is directly proportionate to how far away it is from the viewer (https://en.wikipedia.org/wiki/Perspective_(graphical)#Linear_perspective) and that we wanted to have a simple system that would work with the simple camera systems available commercially, without equipped rangefinders or stereoscopic capabilities. To calculate the distance between two objects, we can leverage the Pythagorean theorem as in a linear grid we can easily calculate X and Y distances.
+
+By combining the two and considering Thale's Theorem (https://en.wikipedia.org/wiki/Intercept_theorem), we can give a rough estimate of the distance two objects of identical size are away from each other.
+
+As an example, if you have an object in the foreground, and an identical object in the background, the background object will appear smaller by the proportion of how farther it is away from the foreground object. You can therefore apply the ratio of the apparent sizes of the objects iteratively and one of the objects apparent heights as a unit of distance to map a rough distance between the two objects.
+
+This means that you can do a rough estimation of distance between foreground and background objects without knowing the exact distance between the viewer and one of the objects, which is "good enough" for estimation of social distancing. Basically, if the people are an apparent human length apart, they should be reasonably assumed to following guidelines.
+
+The system then allows you to enter in a total threshold and a proximity threshold.
+
+The total threshold triggers an alert if the total number of people counted in the image exceeds the given value. The proximity threshold triggers an alert if the ratio of social distancing risks to the entire population in the image exceeds a certain percentage. This is an important "fuzzy logic" number, as people in small groups may be related and part of the same family or party, or perhaps the image being analyzed has people passing each other quickly. This means that the triggers can be tuned to be more meaningful based on real world feedback and adapt to best fit the scenario.
+
+# Putting it all together:
+
 For the purposes of this demonstration, it all starts with the S3 bucket.
 
 ### *Deploy an S3 bucket*
@@ -190,21 +211,3 @@ Next, plug in the following Bucket Policy, taking heed of the warning above:
 And that's it! With luck, you will then be able to access your S3 static site and test out the demo! When you click the button, you should get a notification if your randomly selected image triggers one of your thresholds.
 
 
-
-# Nuts and Bolts: How does it work?
-
-This project demonstrates that you can quickly and easily deploy a population density alert tool with no infrastructure (as everything is serverless) and no model training, with everything working out of the box. However, while the tools exist to perform image Recognition as a service, the ability to determine if the identified people are too close together is not such a common feature.
-
-That's where the math section of the Lambda function comes in. To start, it runs on two major assumptions: all persons identified are all the same exact height, and that they are average height (~5'4", or ~1.625m). As the CDC recommends a 6ft / 2m distance for social distancing, that average height was definitely "good enough" for further calculations.
-
-Next, we know that in an optical standpoint, the size an object appears to be is directly proportionate to how far away it is from the viewer (https://en.wikipedia.org/wiki/Perspective_(graphical)#Linear_perspective) and that we wanted to have a simple system that would work with the simple camera systems available commercially, without equipped rangefinders or stereoscopic capabilities. To calculate the distance between two objects, we can leverage the Pythagorean theorem as in a linear grid we can easily calculate X and Y distances.
-
-By combining the two and considering Thale's Theorem (https://en.wikipedia.org/wiki/Intercept_theorem), we can give a rough estimate of the distance two objects of identical size are away from each other.
-
-As an example, if you have an object in the foreground, and an identical object in the background, the background object will appear smaller by the proportion of how farther it is away from the foreground object. You can therefore apply the ratio of the apparent sizes of the objects iteratively and one of the objects apparent heights as a unit of distance to map a rough distance between the two objects.
-
-This means that you can do a rough estimation of distance between foreground and background objects without knowing the exact distance between the viewer and one of the objects, which is "good enough" for estimation of social distancing. Basically, if the people are an apparent human length apart, they should be reasonably assumed to following guidelines.
-
-The system then allows you to enter in a total threshold and a proximity threshold.
-
-The total threshold triggers an alert if the total number of people counted in the image exceeds the given value. The proximity threshold triggers an alert if the ratio of social distancing risks to the entire population in the image exceeds a certain percentage. This is an important "fuzzy logic" number, as people in small groups may be related and part of the same family or party, or perhaps the image being analyzed has people passing each other quickly. This means that the triggers can be tuned to be more meaningful based on real world feedback and adapt to best fit the scenario.
